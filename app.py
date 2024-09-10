@@ -9,7 +9,7 @@ from filtering_search_page import filtering_search  # 새로 추가된 import
 # 데이터 로드
 @st.cache_data
 def load_data():
-    df = pd.read_csv('integrated_data/integrated_data.csv')
+    df = pd.read_csv('integrated_data.csv')
     return df
 
 
