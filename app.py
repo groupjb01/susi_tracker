@@ -3,8 +3,7 @@ import pandas as pd
 from dashboard_page import dashboard
 from university_analysis_page import university_analysis
 from university_detail_analysis_page import university_detail_analysis
-from filtering_search_page import filtering_search  # 새로 추가된 import
-
+from filtering_search_page import filtering_search
 
 # 데이터 로드
 @st.cache_data
@@ -12,6 +11,10 @@ def load_data():
     df = pd.read_csv('integrated_data.csv')
     return df
 
+# 대학 목록 가져오기
+@st.cache_data
+def get_universities(df):
+    return sorted(df['대학명'].unique())
 
 def main():
     st.title("🖋️ 지략 수시 경쟁률 Tracker 📊")
@@ -20,6 +23,7 @@ def main():
     st.markdown("<br>", unsafe_allow_html=True)
 
     df = load_data()
+    universities = get_universities(df)
 
     # 탭 생성 및 스타일 적용
     tabs = st.tabs(["대시보드", "학교별 통합분석", "학교별 세부분석", "필터링 검색", "보고서 생성"])
@@ -27,8 +31,12 @@ def main():
     # CSS를 사용하여 탭 너비를 전체 페이지에 맞게 조정
     st.markdown("""
         <style>
+            .stTabs {
+                width: 100%;
+            }
             .stTabs [data-baseweb="tab-list"] {
                 gap: 0px;
+                width: 100%;
             }
             .stTabs [data-baseweb="tab"] {
                 height: 50px;
@@ -45,6 +53,9 @@ def main():
             .stTabs [aria-selected="true"] {
                 background-color: #FFFFFF;
             }
+            .stTabs [data-baseweb="tab-panel"] {
+                padding-top: 1rem;
+            }
         </style>
     """, unsafe_allow_html=True)
 
@@ -58,12 +69,11 @@ def main():
         university_detail_analysis(df)
 
     with tabs[3]:
-        filtering_search(df)  # 새로 추가된 함수 호출
+        filtering_search(df, universities)  # universities 목록을 전달
 
     with tabs[4]:
         st.header("보고서 생성")
         st.write("이 페이지는 개발 중입니다.")
-
 
 if __name__ == "__main__":
     main()
